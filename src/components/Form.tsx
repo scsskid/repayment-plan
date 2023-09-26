@@ -1,6 +1,5 @@
-import { revalidatePath } from 'next/cache';
-import store from '../app/storeObject';
-import RepaymentPlan from '@/lib/RepaymentPlan';
+'use client';
+
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -9,56 +8,91 @@ import { Button, TextField, FormLabel } from '@mui/material';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
-import type { PeriodType } from '@/lib/RepaymentPlan';
+import type { RepaymentPlanConstructor } from '@/lib/RepaymentPlan';
+// import { action } from '@/actions/formAction';
+import {
+  onInputChange,
+  onFocusOut,
+  validateInput,
+  UPDATE_FORM
+} from '@/lib/formUtils';
+import { useState } from 'react';
 
-type Props = {};
-export default function Form({}: Props) {
-  const action = async (formData: FormData) => {
-    'use server';
-    console.log('action', formData);
+// type Props = {};
+export default function Form({ formState: state, dispatch }) {
+  const [showError, setShowError] = useState(false);
 
-    const loanAmount = Number(formData.get('loanAmount'));
-    const interestRate = Number(formData.get('interestRate'));
-    const initialRepaymentRate = Number(formData.get('initialRepaymentRate'));
-    const periodType = formData.get('periodType') as PeriodType;
+  const formSubmitHandler = (e) => {
+    e.preventDefault(); //prevents the form from submitting
 
-    // console.log('formData', formData);
-    // console.log({ loanAmount, interestRate, initialRepaymentRate, periodType });
+    let isFormValid = true;
 
-    if (!loanAmount || !interestRate || !initialRepaymentRate || !periodType) {
-      throw new Error('Missing required form data');
+    for (const name in state) {
+      const item = state[name];
+      const { value } = item;
+      const { hasError, errorMessage } = validateInput(name, value);
+      if (hasError) {
+        isFormValid = false;
+      }
+      if (name) {
+        dispatch({
+          type: UPDATE_FORM,
+          data: {
+            name,
+            value,
+            hasError,
+            errorMessage,
+            touched: true,
+            isFormValid
+          }
+        });
+      }
+    }
+    if (!isFormValid) {
+      setShowError(true);
+    } else {
+      //Logic to submit the form to backend
     }
 
-    store.data = new RepaymentPlan({
-      loanAmount,
-      interestRate,
-      initialRepaymentRate,
-      periodType
-    });
-
-    revalidatePath('/');
+    // Hide the error message after 5 seconds
+    setTimeout(() => {
+      setShowError(false);
+    }, 5000);
   };
 
   return (
-    <form action={action}>
+    <form onSubmit={formSubmitHandler}>
+      <pre>{JSON.stringify(state, null, 2)}</pre>
       <Stack spacing={2}>
         <div className="form-element">
           <FormLabel htmlFor="loanAmount">Loan Amount</FormLabel>
           <TextField
             name="loanAmount"
+            onChange={(e) => {
+              onInputChange('loanAmount', e.target.value, dispatch, state);
+            }}
+            onBlur={(e) => {
+              onFocusOut('loanAmount', e.target.value, dispatch, state);
+            }}
             required
-            defaultValue={250000}
+            value={state.loanAmount.value}
             size="small"
             inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
           />
+          {state.loanAmount.touched && state.loanAmount.hasError && (
+            <div className="error">{state.loanAmount.errorMessage}</div>
+          )}
         </div>
 
         <div className="form-element">
           <FormLabel htmlFor="interestRate">Interest Rate</FormLabel>
           <TextField
             name="interestRate"
+            onChange={(e) => {
+              onInputChange('interestRate', e.target.value, dispatch, state);
+            }}
             required
-            defaultValue={4}
+            value={state.interestRate.value}
             inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
             size="small"
           />
@@ -70,15 +104,46 @@ export default function Form({}: Props) {
           </FormLabel>
           <TextField
             name="initialRepaymentRate"
+            onChange={(e) => {
+              onInputChange(
+                'initialRepaymentRate',
+                e.target.value,
+                dispatch,
+                state
+              );
+            }}
             size="small"
             required
-            defaultValue={3}
+            value={state.initialRepaymentRate.value}
             inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
           />
         </div>
 
         <div className="form-element">
-          <PeriodTypeRadioButtonsGroup />
+          <FormControl>
+            <FormLabel id="period-type-radio-buttons-group-label">
+              Rückzahlungsperiode
+            </FormLabel>
+            <RadioGroup
+              aria-labelledby="Select Period Type"
+              value={state.periodType.value}
+              name="periodType"
+              onChange={(e) => {
+                onInputChange('periodType', e.target.value, dispatch, state);
+              }}
+            >
+              <FormControlLabel
+                value="monthly"
+                control={<Radio required={true} />}
+                label="Monatlich"
+              />
+              <FormControlLabel
+                value="annual"
+                control={<Radio required={true} />}
+                label="Jährlich"
+              />
+            </RadioGroup>
+          </FormControl>
         </div>
 
         <div className="form-element">
@@ -87,35 +152,13 @@ export default function Form({}: Props) {
               Plan erstellen
             </Button>
           </Box>
+          {showError && !state.isFormValid && (
+            <div className="form_error">
+              Please fill all the fields correctly
+            </div>
+          )}
         </div>
       </Stack>
     </form>
-  );
-}
-
-function PeriodTypeRadioButtonsGroup() {
-  return (
-    <FormControl>
-      <FormLabel id="period-type-radio-buttons-group-label">
-        Rückzahlungsperiode
-      </FormLabel>
-      <RadioGroup
-        aria-labelledby="Select Period Type"
-        // defaultValue="monthly"
-        // value="monthly"
-        name="periodType"
-      >
-        <FormControlLabel
-          value="monthly"
-          control={<Radio required={true} />}
-          label="Monatlich"
-        />
-        <FormControlLabel
-          value="annual"
-          control={<Radio required={true} />}
-          label="Jährlich"
-        />
-      </RadioGroup>
-    </FormControl>
   );
 }

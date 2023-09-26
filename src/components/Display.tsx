@@ -7,17 +7,41 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 import type { LoanerType } from '@/lib/RepaymentPlan';
+import RepaymentPlan from '@/lib/RepaymentPlan';
 
 // Todo: Types
 
 type Props = {
-  data: LoanerType;
+  formState: LoanerType;
 };
-export default function Display({ data }: Props) {
-  // console.log('data', data);
+export default function Display({ formState }: Props) {
+  const { loanAmount, interestRate, initialRepaymentRate, periodType } =
+    formState;
+
+  console.log('formState', formState);
+
+  if (
+    loanAmount.value === 0 ||
+    interestRate.value === 0 ||
+    initialRepaymentRate.value === 0
+  ) {
+    return <p>NOT VALID</p>;
+  }
+
+  const data = new RepaymentPlan({
+    loanAmount: loanAmount.value,
+    interestRate: interestRate.value,
+    initialRepaymentRate: initialRepaymentRate.value,
+    periodType: periodType.value
+  });
+
+  console.log('data', data);
+
+  // return null;
 
   return (
     <div>
+      <p>foo</p>
       {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
       <BasicTable data={data} />
     </div>
@@ -31,7 +55,7 @@ function BasicTable({ data }: Props) {
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <Table sx={{ minWidth: 650 }} aria-label="Tilgungsplan Tabelle">
         <TableHead>
           <TableRow>
             <TableCell>P ({data.periodType})</TableCell>

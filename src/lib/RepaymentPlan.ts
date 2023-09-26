@@ -1,6 +1,6 @@
 export type PeriodType = 'annual' | 'monthly';
 
-type Constructor = {
+export type RepaymentPlanConstructor = {
   loanAmount: number;
   interestRate: number;
   initialRepaymentRate: number;
@@ -16,7 +16,7 @@ type LoanerEntry = {
   remainingLoanAmountAfterPeriod: number;
 };
 
-export type LoanerType = Constructor & {
+export type LoanerType = RepaymentPlanConstructor & {
   repaymentEntries: LoanerEntry[];
 };
 
@@ -32,7 +32,7 @@ export default class Loaner {
     interestRate,
     loanAmount,
     periodType = 'annual'
-  }: Constructor) {
+  }: RepaymentPlanConstructor) {
     this.periodType = periodType;
     this.loanAmount = loanAmount;
     this.initialRepaymentRate = initialRepaymentRate;

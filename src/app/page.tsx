@@ -1,13 +1,9 @@
 import Box from '@mui/material/Box';
-import Form from '@/components/Form';
-import Display from '@/components/Display';
-import store from './storeObject';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
+import Loander from '@/components/Loaner';
 
 export default function Home() {
-  const data = store.data;
-
   return (
     <Container maxWidth="md">
       <header>
@@ -15,8 +11,7 @@ export default function Home() {
       </header>
       <Box sx={{ py: 2 }}>
         <Stack spacing={4}>
-          <Form />
-          <Display data={data} />
+          <Loander />
         </Stack>
       </Box>
       <header>
