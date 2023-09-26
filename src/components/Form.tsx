@@ -2,6 +2,10 @@ import { revalidatePath } from 'next/cache';
 import store from '../app/storeObject';
 import RepaymentPlan from '@/lib/RepaymentPlan';
 
+import { Button, TextField, FormLabel } from '@mui/material';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+
 type Props = {};
 export default function Form({}: Props) {
   const action = async (formData: FormData) => {
@@ -29,27 +33,50 @@ export default function Form({}: Props) {
 
   return (
     <form action={action}>
-      <div className="form-element">
-        <label htmlFor="loanAmount">Loan Amount</label>
-        <input type="number" name="loanAmount" defaultValue={250000} required />
-      </div>
+      <Stack spacing={2}>
+        <div className="form-element">
+          <FormLabel htmlFor="loanAmount">Loan Amount</FormLabel>
+          <TextField
+            name="loanAmount"
+            required
+            defaultValue={250000}
+            size="small"
+            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+          />
+        </div>
 
-      <div className="form-element">
-        <label htmlFor="interestRate">Interest Rate</label>
-        <input type="number" name="interestRate" required defaultValue={4} />
-      </div>
+        <div className="form-element">
+          <FormLabel htmlFor="interestRate">Interest Rate</FormLabel>
+          <TextField
+            name="interestRate"
+            required
+            defaultValue={4}
+            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+            size="small"
+          />
+        </div>
 
-      <div className="form-element">
-        <label htmlFor="initialRepaymentRate">Initial Repayment Rate</label>
-        <input
-          type="number"
-          name="initialRepaymentRate"
-          required
-          defaultValue={3}
-        />
-      </div>
+        <div className="form-element">
+          <FormLabel htmlFor="initialRepaymentRate">
+            Initial Repayment Rate
+          </FormLabel>
+          <TextField
+            name="initialRepaymentRate"
+            size="small"
+            required
+            defaultValue={3}
+            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+          />
+        </div>
 
-      <input type="submit" value="Submit" />
+        <div className="form-element">
+          <Box sx={{ pt: 4 }} className="form-element">
+            <Button type="submit" variant="contained">
+              Plan erstellen
+            </Button>
+          </Box>
+        </div>
+      </Stack>
     </form>
   );
 }
