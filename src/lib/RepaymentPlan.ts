@@ -1,10 +1,10 @@
-type Period = 'annual' | 'monthly';
+export type PeriodType = 'annual' | 'monthly';
 
-type LoanerProps = {
+type Constructor = {
   loanAmount: number;
   interestRate: number;
   initialRepaymentRate: number;
-  period?: Period;
+  periodType?: PeriodType;
 };
 
 type LoanerEntry = {
@@ -16,37 +16,38 @@ type LoanerEntry = {
   remainingLoanAmountAfterPeriod: number;
 };
 
-type Plan = {
-  period: Period;
-  loanAmount: number;
-  entries: LoanerEntry[];
+export type LoanerType = Constructor & {
+  repaymentEntries: LoanerEntry[];
 };
 
 export default class Loaner {
-  private period: Period;
-  private periodDivider: 12 | 1;
-  public plan: Plan;
-  private initialRepaymentRate: number;
-  private interestRate: number;
+  public periodType: PeriodType;
+  public initialRepaymentRate: number;
+  public interestRate: number;
+  public loanAmount: number;
+  public repaymentEntries: LoanerEntry[];
 
   constructor({
     initialRepaymentRate,
     interestRate,
     loanAmount,
-    period = 'annual'
-  }: LoanerProps) {
-    this.plan = { period, loanAmount, entries: [] };
+    periodType = 'annual'
+  }: Constructor) {
+    this.periodType = periodType;
+    this.loanAmount = loanAmount;
     this.initialRepaymentRate = initialRepaymentRate;
     this.interestRate = interestRate;
+    this.repaymentEntries = [];
 
     this.buildPlanEntries();
   }
 
   private buildPlanEntries() {
-    const { interestRate, initialRepaymentRate, plan } = this;
-    let { loanAmount: remainingLoanAmount } = plan;
+    const { interestRate, initialRepaymentRate, repaymentEntries } = this;
+    let { loanAmount: remainingLoanAmount } = this;
+
     let p = 0; // rename to periodIndex
-    const periodDivider = this.plan.period === 'monthly' ? 12 : 1;
+    const periodDivider = this.periodType === 'monthly' ? 12 : 1;
 
     // remainingLoanAmount is always measured at begin of period
     // set repayment to initial value (Year 0)
@@ -71,7 +72,7 @@ export default class Loaner {
       }
 
       // push period entry to plan.entries
-      plan.entries.push({
+      repaymentEntries.push({
         p,
         remainingLoanAmount,
         annuity,

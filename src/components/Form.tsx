@@ -1,10 +1,15 @@
 import { revalidatePath } from 'next/cache';
 import store from '../app/storeObject';
 import RepaymentPlan from '@/lib/RepaymentPlan';
-
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
 import { Button, TextField, FormLabel } from '@mui/material';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+
+import type { PeriodType } from '@/lib/RepaymentPlan';
 
 type Props = {};
 export default function Form({}: Props) {
@@ -15,19 +20,22 @@ export default function Form({}: Props) {
     const loanAmount = Number(formData.get('loanAmount'));
     const interestRate = Number(formData.get('interestRate'));
     const initialRepaymentRate = Number(formData.get('initialRepaymentRate'));
+    const periodType = formData.get('periodType') as PeriodType;
 
     console.log('formData', formData);
     console.log({ loanAmount, interestRate, initialRepaymentRate });
 
-    if (!loanAmount || !interestRate || !initialRepaymentRate) {
+    if (!loanAmount || !interestRate || !initialRepaymentRate || !periodType) {
       throw new Error('Missing required form data');
     }
 
     store.data = new RepaymentPlan({
       loanAmount,
       interestRate,
-      initialRepaymentRate
+      initialRepaymentRate,
+      periodType
     });
+
     revalidatePath('/');
   };
 
@@ -70,6 +78,10 @@ export default function Form({}: Props) {
         </div>
 
         <div className="form-element">
+          <PeriodTypeRadioButtonsGroup />
+        </div>
+
+        <div className="form-element">
           <Box sx={{ pt: 4 }} className="form-element">
             <Button type="submit" variant="contained">
               Plan erstellen
@@ -78,5 +90,27 @@ export default function Form({}: Props) {
         </div>
       </Stack>
     </form>
+  );
+}
+
+function PeriodTypeRadioButtonsGroup() {
+  return (
+    <FormControl>
+      <FormLabel id="period-type-radio-buttons-group-label">
+        Rückzahlungsperiode
+      </FormLabel>
+      <RadioGroup
+        aria-labelledby="Select Period Type"
+        defaultValue="monthly"
+        name="periodType"
+      >
+        <FormControlLabel
+          value="monthly"
+          control={<Radio />}
+          label="Monatlich"
+        />
+        <FormControlLabel value="annual" control={<Radio />} label="Jährlich" />
+      </RadioGroup>
+    </FormControl>
   );
 }

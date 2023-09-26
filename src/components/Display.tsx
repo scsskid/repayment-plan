@@ -1,3 +1,5 @@
+// Todo: Types
+
 type Props = {
   data: any[];
 };

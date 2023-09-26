@@ -1,3 +1,3 @@
-const loaner = Object.create(null);
+const store = Object.create(null);
 
-export default loaner;
+export default store;
