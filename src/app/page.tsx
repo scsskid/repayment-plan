@@ -6,6 +6,8 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 
 export default function Home() {
+  const data = store.data;
+
   return (
     <Container maxWidth="md">
       <header>
@@ -14,7 +16,7 @@ export default function Home() {
       <Box sx={{ py: 2 }}>
         <Stack spacing={4}>
           <Form />
-          <Display data={store} />
+          <Display data={data} />
         </Stack>
       </Box>
       <header>

@@ -22,8 +22,8 @@ export default function Form({}: Props) {
     const initialRepaymentRate = Number(formData.get('initialRepaymentRate'));
     const periodType = formData.get('periodType') as PeriodType;
 
-    console.log('formData', formData);
-    console.log({ loanAmount, interestRate, initialRepaymentRate });
+    // console.log('formData', formData);
+    // console.log({ loanAmount, interestRate, initialRepaymentRate, periodType });
 
     if (!loanAmount || !interestRate || !initialRepaymentRate || !periodType) {
       throw new Error('Missing required form data');
@@ -101,15 +101,20 @@ function PeriodTypeRadioButtonsGroup() {
       </FormLabel>
       <RadioGroup
         aria-labelledby="Select Period Type"
-        defaultValue="monthly"
+        // defaultValue="monthly"
+        // value="monthly"
         name="periodType"
       >
         <FormControlLabel
           value="monthly"
-          control={<Radio />}
+          control={<Radio required={true} />}
           label="Monatlich"
         />
-        <FormControlLabel value="annual" control={<Radio />} label="Jährlich" />
+        <FormControlLabel
+          value="annual"
+          control={<Radio required={true} />}
+          label="Jährlich"
+        />
       </RadioGroup>
     </FormControl>
   );
