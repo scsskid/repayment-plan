@@ -8,7 +8,7 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import { Button, TextField, FormLabel } from '@mui/material';
+import { Button, TextField, FormLabel, Checkbox, Slider } from '@mui/material';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
@@ -154,6 +154,78 @@ export default function Form({ formState: state, dispatch }: Props) {
             </RadioGroup>
           </FormControl>
         </div>
+
+        <div className="form-element">
+          <FormLabel htmlFor="fixedInterest">Zinsbindung festlegen</FormLabel>
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="fixedInterest"
+                onChange={(e) => {
+                  onInputChange(
+                    'fixedInterest',
+                    e.target.checked,
+                    dispatch,
+                    state
+                  );
+                }}
+              />
+            }
+            label="Zinsbindung festlegen"
+          />
+        </div>
+
+        {state.fixedInterest.value && (
+          <>
+            <div className="form-element">
+              <FormLabel htmlFor="fixedInterestDuration">
+                Zinsbindungsdauer (Jahre)
+              </FormLabel>
+              <Slider
+                name="fixedInterestDuration"
+                id="fixedInterestDuration"
+                onChange={(e: Event) => {
+                  if (!e.target) return;
+
+                  onInputChange(
+                    'fixedInterestDuration',
+                    // @ts-ignore
+                    e.target.value,
+                    dispatch,
+                    state
+                  );
+                }}
+                aria-label="Zinsbindungsdauer (Jahre)"
+                defaultValue={1}
+                step={1}
+                min={1}
+                max={30}
+                valueLabelDisplay="on"
+              />
+            </div>
+
+            <div className="form-element">
+              <FormLabel htmlFor="initialRepaymentRate">
+                Anschlusszinssatz
+              </FormLabel>
+              <TextField
+                name="fixedInterestFollowingInterestRate"
+                onChange={(e) => {
+                  onInputChange(
+                    'fixedInterestFollowingInterestRate',
+                    e.target.value,
+                    dispatch,
+                    state
+                  );
+                }}
+                size="small"
+                required
+                value={state.fixedInterestFollowingInterestRate.value}
+                inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+              />
+            </div>
+          </>
+        )}
 
         <div className="form-element">
           <Box sx={{ pt: 4 }} className="form-element">

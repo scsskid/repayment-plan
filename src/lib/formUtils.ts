@@ -4,7 +4,7 @@ export const UPDATE_FORM = 'UPDATE_FORM';
 
 export const onInputChange = (
   name: keyof FormState,
-  value: string,
+  value: string | boolean,
   dispatch: (action: DispatchAction) => {},
   formState: FormState
 ) => {
@@ -30,13 +30,14 @@ export const onInputChange = (
   });
 };
 
-export const validateInput = (name: string, value: string) => {
+export const validateInput = (name: string, value: string | boolean) => {
   let hasError = false,
     errorMessage = '';
   switch (name) {
     case 'interestRate':
     case 'initialRepaymentRate':
     case 'loanAmount':
+      // @ts-ignore
       if (value.trim() === '') {
         hasError = true;
         errorMessage = 'Cannot be empty';

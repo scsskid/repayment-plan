@@ -13,16 +13,18 @@ export type DispatchAction = {
 };
 
 export type FormStateItem = {
-  value: string;
   touched: boolean;
   hasError: boolean;
   errorMessage: string;
 };
 
 export type FormState = {
-  loanAmount: FormStateItem;
-  interestRate: FormStateItem;
-  initialRepaymentRate: FormStateItem;
-  periodType: { value: PeriodType };
+  loanAmount: FormStateItem & { value: string };
+  interestRate: FormStateItem & { value: string };
+  initialRepaymentRate: FormStateItem & { value: string };
+  periodType: FormStateItem & { value: PeriodType };
+  fixedInterest: FormStateItem & { value: boolean };
+  fixedInterestDuration: FormStateItem & { value: string };
+  fixedInterestFollowingInterestRate: FormStateItem & { value: string };
   isFormValid: boolean;
 };
