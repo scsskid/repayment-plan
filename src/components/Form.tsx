@@ -1,5 +1,9 @@
 'use client';
 
+// React
+import { FormEvent, useState } from 'react';
+
+// MUI
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -8,26 +12,30 @@ import { Button, TextField, FormLabel } from '@mui/material';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
-import type { RepaymentPlanConstructor } from '@/lib/RepaymentPlan';
-// import { action } from '@/actions/formAction';
+// Form Utils
 import {
   onInputChange,
   onFocusOut,
   validateInput,
   UPDATE_FORM
 } from '@/lib/formUtils';
-import { useState } from 'react';
+import { DispatchAction, FormState } from '@/types/common';
 
-// type Props = {};
-export default function Form({ formState: state, dispatch }) {
+type Props = {
+  formState: FormState;
+  dispatch: (action: DispatchAction) => {};
+};
+
+export default function Form({ formState: state, dispatch }: Props) {
   const [showError, setShowError] = useState(false);
 
-  const formSubmitHandler = (e) => {
+  const formSubmitHandler = (e: FormEvent) => {
     e.preventDefault(); //prevents the form from submitting
 
     let isFormValid = true;
 
     for (const name in state) {
+      // @ts-ignore
       const item = state[name];
       const { value } = item;
       const { hasError, errorMessage } = validateInput(name, value);
@@ -38,6 +46,7 @@ export default function Form({ formState: state, dispatch }) {
         dispatch({
           type: UPDATE_FORM,
           data: {
+            // @ts-ignore
             name,
             value,
             hasError,
@@ -149,7 +158,7 @@ export default function Form({ formState: state, dispatch }) {
         <div className="form-element">
           <Box sx={{ pt: 4 }} className="form-element">
             <Button type="submit" variant="contained">
-              Plan erstellen
+              Berechnen
             </Button>
           </Box>
           {showError && !state.isFormValid && (

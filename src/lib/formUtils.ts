@@ -1,11 +1,18 @@
+import type { DispatchAction, FormState, FormStateItem } from '@/types/common';
+
 export const UPDATE_FORM = 'UPDATE_FORM';
 
-export const onInputChange = (name, value, dispatch, formState) => {
+export const onInputChange = (
+  name: keyof FormState,
+  value: string,
+  dispatch: (action: DispatchAction) => {},
+  formState: FormState
+) => {
   const { hasError, errorMessage } = validateInput(name, value);
   let isFormValid = true;
 
   for (const key in formState) {
-    const item = formState[key];
+    const item = formState[key as keyof FormState] as FormStateItem;
     // Check if the current field has error
     if (key === name && hasError) {
       isFormValid = false;
@@ -23,7 +30,7 @@ export const onInputChange = (name, value, dispatch, formState) => {
   });
 };
 
-export const validateInput = (name, value) => {
+export const validateInput = (name: string, value: string) => {
   let hasError = false,
     errorMessage = '';
   switch (name) {
@@ -47,11 +54,16 @@ export const validateInput = (name, value) => {
   return { hasError, errorMessage };
 };
 
-export const onFocusOut = (name, value, dispatch, formState) => {
+export const onFocusOut = (
+  name: keyof FormState,
+  value: string,
+  dispatch: (action: DispatchAction) => {},
+  formState: FormState
+) => {
   const { hasError, errorMessage } = validateInput(name, value);
   let isFormValid = true;
   for (const key in formState) {
-    const item = formState[key];
+    const item = formState[key as keyof FormState] as FormStateItem;
     if (key === name && hasError) {
       isFormValid = false;
       break;
@@ -66,3 +78,15 @@ export const onFocusOut = (name, value, dispatch, formState) => {
     data: { name, value, hasError, errorMessage, touched: true, isFormValid }
   });
 };
+
+// const validateForm = (formState) => {
+//   let isFormValid = true;
+//   for (const key in formState) {
+//     const item = formState[key];
+//     if (item.hasError) {
+//       isFormValid = false;
+//       break;
+//     }
+//   }
+//   return isFormValid;
+// };

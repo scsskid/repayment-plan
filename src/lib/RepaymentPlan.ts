@@ -4,10 +4,10 @@ export type RepaymentPlanConstructor = {
   loanAmount: number;
   interestRate: number;
   initialRepaymentRate: number;
-  periodType?: PeriodType;
+  periodType: PeriodType;
 };
 
-type LoanerEntry = {
+export type LoanerEntry = {
   p: number;
   annuity: number;
   interest: number;
