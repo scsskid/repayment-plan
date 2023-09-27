@@ -20,7 +20,10 @@ export default function RepaymentPlanTable({ data }: { data: LoanerType }) {
       <Table sx={{ minWidth: 650 }} aria-label="Tilgungsplan Tabelle">
         <TableHead>
           <TableRow>
-            <TableCell>P ({data.periodType})</TableCell>
+            <TableCell>
+              periodIndex
+              <br />({data.periodType})
+            </TableCell>
             <TableCell align="right">Annuität</TableCell>
             <TableCell align="right">Zinsanteil</TableCell>
             <TableCell align="right">Tilgungsanteil</TableCell>
@@ -31,19 +34,26 @@ export default function RepaymentPlanTable({ data }: { data: LoanerType }) {
         <TableBody>
           {rows.map(
             ({
-              p,
+              periodIndex,
               remainingLoanAmount,
               annuity,
               interest,
               repayment,
-              remainingLoanAmountAfterPeriod
+              remainingLoanAmountAfterPeriod,
+              isFirstPeriodAfterFixedInterest
             }) => (
               <TableRow
-                key={p}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                key={periodIndex}
+                sx={{
+                  '&:last-child td, &:last-child th': { border: 0 },
+                  ...(isFirstPeriodAfterFixedInterest && {
+                    'th, td': { borderTop: '2px solid red' }
+                  })
+                }}
               >
                 <TableCell component="th" scope="row">
-                  {p}
+                  {periodIndex}{' '}
+                  {isFirstPeriodAfterFixedInterest && ' (nach Sollzinsbindung)'}
                 </TableCell>
                 <TableCell align="right">
                   {numberToLocaleString(annuity)}

@@ -71,7 +71,7 @@ export default function Form({ formState: state, dispatch }: Props) {
 
   return (
     <form onSubmit={formSubmitHandler}>
-      <pre>{JSON.stringify(state, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(state, null, 2)}</pre> */}
       <Stack spacing={2}>
         <div className="form-element">
           <FormLabel htmlFor="loanAmount">Loan Amount</FormLabel>
