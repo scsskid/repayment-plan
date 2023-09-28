@@ -11,6 +11,17 @@ export default function Display({ formState }: Props) {
   const { repaymentPlan, isFormValidSimple } = useRepaymentPlan(formState);
   const { initialAunnuity, periodType } = repaymentPlan;
 
+  const startDate = new Date();
+
+  if (periodType === 'annual') {
+    startDate.setMonth(0);
+  }
+
+  startDate.setHours(0, 0, 0, 0);
+  startDate.setDate(1);
+
+  console.log('--- startDate', startDate);
+
   if (!isFormValidSimple) {
     return (
       <>
@@ -25,6 +36,8 @@ export default function Display({ formState }: Props) {
       {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
 
       <dl>
+        <dt>Startdatum: </dt>
+        <dd>{startDate.toLocaleDateString('de')}</dd>
         <dt>Laufzeit: </dt>
         <dd>{repaymentPlan.periodType}</dd>
         {initialAunnuity && (
@@ -45,7 +58,7 @@ export default function Display({ formState }: Props) {
           </>
         )}
       </dl>
-      <RepaymentPlanTable data={repaymentPlan} />
+      <RepaymentPlanTable repaymentPlan={repaymentPlan} startDate={startDate} />
     </div>
   );
 }

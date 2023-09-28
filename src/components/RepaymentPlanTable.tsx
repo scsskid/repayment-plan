@@ -1,5 +1,5 @@
 import type { LoanerType } from '@/lib/RepaymentPlan';
-import { numberToLocaleString } from '@/lib/helpers';
+import { getPeriodDate, numberToLocaleString } from '@/lib/helpers';
 
 // MUI
 import Table from '@mui/material/Table';
@@ -10,10 +10,30 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-export default function RepaymentPlanTable({ data }: { data: LoanerType }) {
-  if (!data || !data.repaymentEntries) return null;
+export default function RepaymentPlanTable({
+  repaymentPlan,
+  startDate
+}: {
+  repaymentPlan: LoanerType;
+  startDate: Date;
+}) {
+  if (!repaymentPlan || !repaymentPlan.repaymentEntries) return null;
 
-  const rows = data.repaymentEntries;
+  // const copyStartDate = new Date(startDate.getTime());
+
+  const rows = repaymentPlan.repaymentEntries.map((entry, index) => {
+    return {
+      ...entry,
+      periodDate: getPeriodDate(startDate, repaymentPlan.periodType, index)
+    };
+  });
+  const periodDateOptions: Intl.DateTimeFormatOptions =
+    repaymentPlan.periodType === 'annual'
+      ? { year: 'numeric' }
+      : {
+          month: '2-digit',
+          year: 'numeric'
+        };
 
   return (
     <TableContainer component={Paper}>
@@ -22,7 +42,7 @@ export default function RepaymentPlanTable({ data }: { data: LoanerType }) {
           <TableRow>
             <TableCell>
               periodIndex
-              <br />({data.periodType})
+              <br />({repaymentPlan.periodType})
             </TableCell>
             <TableCell align="right">Annuität</TableCell>
             <TableCell align="right">Zinsanteil</TableCell>
@@ -40,38 +60,46 @@ export default function RepaymentPlanTable({ data }: { data: LoanerType }) {
               interest,
               repayment,
               remainingLoanAmountAfterPeriod,
-              isFirstPeriodAfterFixedInterest
-            }) => (
-              <TableRow
-                key={periodIndex}
-                sx={{
-                  '&:last-child td, &:last-child th': { border: 0 },
-                  ...(isFirstPeriodAfterFixedInterest && {
-                    'th, td': { borderTop: '2px solid red' }
-                  })
-                }}
-              >
-                <TableCell component="th" scope="row">
-                  {periodIndex}{' '}
-                  {isFirstPeriodAfterFixedInterest && ' (nach Sollzinsbindung)'}
-                </TableCell>
-                <TableCell align="right">
-                  {numberToLocaleString(annuity)}
-                </TableCell>
-                <TableCell align="right">
-                  {numberToLocaleString(interest)}
-                </TableCell>
-                <TableCell align="right">
-                  {numberToLocaleString(repayment)}
-                </TableCell>
-                <TableCell align="right">
-                  {numberToLocaleString(remainingLoanAmount)}
-                </TableCell>
-                <TableCell align="right">
-                  {numberToLocaleString(remainingLoanAmountAfterPeriod)}
-                </TableCell>
-              </TableRow>
-            )
+              isFirstPeriodAfterFixedInterest,
+              periodDate
+            }) => {
+              return (
+                <TableRow
+                  key={periodIndex}
+                  sx={{
+                    '&:last-child td, &:last-child th': { border: 0 },
+                    ...(isFirstPeriodAfterFixedInterest && {
+                      'th, td': { borderTop: '2px solid red' }
+                    })
+                  }}
+                >
+                  <TableCell component="th" scope="row">
+                    {periodIndex}
+                    <br />
+                    {periodDate.toLocaleDateString('de', periodDateOptions)}
+
+                    <br />
+                    {isFirstPeriodAfterFixedInterest &&
+                      ' (nach Sollzinsbindung)'}
+                  </TableCell>
+                  <TableCell align="right">
+                    {numberToLocaleString(annuity)}
+                  </TableCell>
+                  <TableCell align="right">
+                    {numberToLocaleString(interest)}
+                  </TableCell>
+                  <TableCell align="right">
+                    {numberToLocaleString(repayment)}
+                  </TableCell>
+                  <TableCell align="right">
+                    {numberToLocaleString(remainingLoanAmount)}
+                  </TableCell>
+                  <TableCell align="right">
+                    {numberToLocaleString(remainingLoanAmountAfterPeriod)}
+                  </TableCell>
+                </TableRow>
+              );
+            }
           )}
         </TableBody>
       </Table>
