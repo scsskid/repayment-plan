@@ -4,7 +4,7 @@ export type DispatchAction = {
   type: string;
   data: {
     name: keyof FormState;
-    value: string;
+    value: string | boolean;
     hasError: boolean;
     errorMessage: string;
     touched: boolean;

@@ -37,7 +37,9 @@ export const validateInput = (name: string, value: string | boolean) => {
     case 'interestRate':
     case 'initialRepaymentRate':
     case 'loanAmount':
-      // @ts-ignore
+      if (typeof value === 'boolean') {
+        break;
+      }
       if (value.trim() === '') {
         hasError = true;
         errorMessage = 'Cannot be empty';
