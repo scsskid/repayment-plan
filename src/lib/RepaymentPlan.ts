@@ -91,7 +91,6 @@ export default class Loaner {
         this.fixedInterestDuration &&
         periodIndex === this.fixedInterestDuration * periodDivider
       ) {
-        console.log('fixedInterestDuration reached', remainingLoanAmount);
         this.loanAmountAfterFixedInterestPeriod = remainingLoanAmount;
       }
 
@@ -125,54 +124,4 @@ export default class Loaner {
       periodIndex++;
     }
   }
-
-  // public rebuild({
-  //   initialRepaymentRate,
-  //   interestRate,
-  //   loanAmount,
-  //   periodType = 'annual'
-  // }: RepaymentPlanConstructor) {
-  //   this.periodType = periodType;
-  //   this.loanAmount = loanAmount;
-  //   this.initialRepaymentRate = initialRepaymentRate;
-  //   this.interestRate = interestRate;
-  //   this.repaymentEntries = [];
-
-  //   this.buildPlanEntries();
-  // }
 }
-
-// if (
-//   this.fixedInterest &&
-//   this.fixedInterestDuration &&
-//   this.fixedInterestFollowingInterestRate &&
-//   this.fixedInterestFollowingInterestRate > 0
-// ) {
-//   console.log({
-//     thisFixedInterestDuration: this.fixedInterestDuration,
-//     periodIndex
-//   });
-//   if (periodIndex === this.fixedInterestDuration * periodDivider) {
-//     console.log('fixedInterestDuration reached', remainingLoanAmount);
-//     this.interestRate = this.fixedInterestFollowingInterestRate;
-//     interest =
-//       (remainingLoanAmount * this.fixedInterestFollowingInterestRate) /
-//       100 /
-//       periodDivider;
-
-//     annuity =
-//       (remainingLoanAmount * this.fixedInterestFollowingInterestRate) /
-//         100 /
-//         periodDivider +
-//       (remainingLoanAmount * this.initialRepaymentRate) /
-//         100 /
-//         periodDivider;
-//   }
-
-//   if (periodIndex >= this.fixedInterestDuration * periodDivider) {
-//     interest =
-//       (remainingLoanAmount * this.fixedInterestFollowingInterestRate) /
-//       100 /
-//       periodDivider;
-//   }
-// }
