@@ -23,7 +23,7 @@ const initialState = {
   periodType: { value: 'monthly' },
   fixedInterest: { ...commonProps, value: false },
   fixedInterestDuration: { ...commonProps, value: '1' },
-  fixedInterestFollowingInterestRate: { ...commonProps, value: '0' },
+  fixedInterestFollowingInterestRate: { ...commonProps, value: '5' },
   startDate: { ...commonProps, value: new Date() },
   isFormValid: false
 } as FormState;
