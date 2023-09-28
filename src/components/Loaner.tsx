@@ -3,7 +3,7 @@
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/de';
-import { useReducer } from 'react';
+import { useReducer, useState } from 'react';
 import { UPDATE_FORM } from '@/lib/formUtils';
 import Display from './Display';
 import Form from './Form';
@@ -17,10 +17,10 @@ const commonProps = {
 };
 
 const initialState = {
-  loanAmount: { ...commonProps, value: '250000' },
-  interestRate: { ...commonProps, value: '2' },
-  initialRepaymentRate: { ...commonProps, value: '3' },
-  periodType: { value: 'annual' },
+  loanAmount: { ...commonProps, value: '' },
+  interestRate: { ...commonProps, value: '' },
+  initialRepaymentRate: { ...commonProps, value: '' },
+  periodType: { value: 'monthly' },
   fixedInterest: { ...commonProps, value: false },
   fixedInterestDuration: { ...commonProps, value: '1' },
   fixedInterestFollowingInterestRate: { ...commonProps, value: '0' },
@@ -28,30 +28,13 @@ const initialState = {
   isFormValid: false
 } as FormState;
 
-const formReducer = (state: FormState, action: DispatchAction) => {
-  // console.log('action', action);
-  switch (action.type) {
-    case UPDATE_FORM:
-      const { name, value, hasError, errorMessage, touched, isFormValid } =
-        action.data;
-      return {
-        ...state,
-        // @ts-ignore
-        [name]: { ...state[name], value, hasError, errorMessage, touched },
-        isFormValid
-      };
-    default:
-      return state;
-  }
-};
-
 export default function Loaner() {
+  // Todo: useRecuder should not be initialized until the form is submitted
   const [formState, dispatch] = useReducer(formReducer, initialState) as [
     FormState,
     React.Dispatch<DispatchAction>
   ];
-
-  console.log('--- formState', formState);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const startDate = formState.startDate.value;
   const periodType = formState.periodType.value;
@@ -66,9 +49,30 @@ export default function Loaner() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="de">
       <div>
-        <Form formState={formState} dispatch={dispatch} />
-        <Display formState={formState} />
+        <Form
+          formState={formState}
+          dispatch={dispatch}
+          setFormSubmitted={setFormSubmitted}
+          formSubmitted={formSubmitted}
+        />
+        {formSubmitted && <Display formState={formState} />}
       </div>
     </LocalizationProvider>
   );
 }
+
+const formReducer = (state: FormState, action: DispatchAction) => {
+  switch (action.type) {
+    case UPDATE_FORM:
+      const { name, value, hasError, errorMessage, touched, isFormValid } =
+        action.data;
+      return {
+        ...state,
+        // @ts-ignore
+        [name]: { ...state[name], value, hasError, errorMessage, touched },
+        isFormValid
+      };
+    default:
+      return state;
+  }
+};

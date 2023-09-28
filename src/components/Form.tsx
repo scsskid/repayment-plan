@@ -36,13 +36,21 @@ import { DispatchAction, FormState } from '@/types/common';
 type Props = {
   formState: FormState;
   dispatch: React.Dispatch<DispatchAction>;
+  formSubmitted: boolean;
+  setFormSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function Form({ formState: state, dispatch }: Props) {
+export default function Form({
+  formState: state,
+  dispatch,
+  formSubmitted,
+  setFormSubmitted
+}: Props) {
   const [showError, setShowError] = useState(false);
 
   const formSubmitHandler = (e: FormEvent) => {
     e.preventDefault(); //prevents the form from submitting
+    setFormSubmitted(true);
 
     let isFormValid = true;
 
@@ -281,9 +289,17 @@ export default function Form({ formState: state, dispatch }: Props) {
 
         <div className="form-element">
           <Box sx={{ pt: 4 }} className="form-element">
-            <Button type="submit" variant="contained">
+            <Button type="submit" variant="contained" disabled={formSubmitted}>
               Berechnen
             </Button>
+            {formSubmitted && (
+              <p>
+                <small>
+                  Die Tabelle wird automatisch bei Änderungen der Paramter
+                  aktualisiert.
+                </small>
+              </p>
+            )}
           </Box>
           {showError && !state.isFormValid && (
             <div className="form_error">

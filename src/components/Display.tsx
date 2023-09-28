@@ -27,7 +27,7 @@ export default function Display({ formState }: Props) {
   if (!isFormValidSimple) {
     return (
       <>
-        <p>NOT VALID</p>
+        <p style={{ color: 'red' }}>formData ist ungültig.</p>
         <pre>{JSON.stringify(formState, null, 2)}</pre>
       </>
     );
@@ -48,7 +48,7 @@ export default function Display({ formState }: Props) {
         {initialAunnuity && (
           <>
             <dt>Annuität: </dt>
-            <dd>{numberToLocaleString(initialAunnuity)}</dd>
+            <dd>{numberToLocaleString(initialAunnuity)} €</dd>
           </>
         )}
 
@@ -58,7 +58,8 @@ export default function Display({ formState }: Props) {
             <dd>
               {numberToLocaleString(
                 repaymentPlan.loanAmountAfterFixedInterestPeriod
-              )}
+              )}{' '}
+              €
             </dd>
           </>
         )}

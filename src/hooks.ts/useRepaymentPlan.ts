@@ -13,9 +13,9 @@ export default function useRepaymentPlan(formState: FormState) {
   } = formState;
 
   const isFormValidSimple =
-    loanAmount.value !== '0' &&
-    interestRate.value !== '0' &&
-    initialRepaymentRate.value !== '0' &&
+    parseFloat(loanAmount.value) > 0 &&
+    parseFloat(interestRate.value) > 0 &&
+    parseFloat(initialRepaymentRate.value) > 0 &&
     loanAmount.value !== '' &&
     interestRate.value !== '' &&
     initialRepaymentRate.value !== '';
