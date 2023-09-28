@@ -15,23 +15,27 @@ export default function RepaymentPlanTable({
   startDate
 }: {
   repaymentPlan: LoanerType;
-  startDate: Date;
+  startDate: {
+    value: Date;
+  };
 }) {
   if (!repaymentPlan || !repaymentPlan.repaymentEntries) return null;
-
-  // const copyStartDate = new Date(startDate.getTime());
 
   const rows = repaymentPlan.repaymentEntries.map((entry, index) => {
     return {
       ...entry,
-      periodDate: getPeriodDate(startDate, repaymentPlan.periodType, index)
+      periodDate: getPeriodDate(
+        startDate.value,
+        repaymentPlan.periodType,
+        index
+      )
     };
   });
   const periodDateOptions: Intl.DateTimeFormatOptions =
     repaymentPlan.periodType === 'annual'
       ? { year: 'numeric' }
       : {
-          month: '2-digit',
+          month: 'short',
           year: 'numeric'
         };
 
@@ -40,9 +44,9 @@ export default function RepaymentPlanTable({
       <Table sx={{ minWidth: 650 }} aria-label="Tilgungsplan Tabelle">
         <TableHead>
           <TableRow>
+            <TableCell></TableCell>
             <TableCell>
-              periodIndex
-              <br />({repaymentPlan.periodType})
+              {repaymentPlan.periodType === 'annual' ? 'Jahr' : 'Monat'}
             </TableCell>
             <TableCell align="right">Annuität</TableCell>
             <TableCell align="right">Zinsanteil</TableCell>
@@ -75,7 +79,8 @@ export default function RepaymentPlanTable({
                 >
                   <TableCell component="th" scope="row">
                     {periodIndex}
-                    <br />
+                  </TableCell>
+                  <TableCell>
                     {periodDate.toLocaleDateString('de', periodDateOptions)}
 
                     <br />

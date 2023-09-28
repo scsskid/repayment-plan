@@ -1,11 +1,16 @@
-import type { DispatchAction, FormState, FormStateItem } from '@/types/common';
+import type {
+  DispatchAction,
+  DispatchActionDataValue,
+  FormState,
+  FormStateItem
+} from '@/types/common';
 
 export const UPDATE_FORM = 'UPDATE_FORM';
 
 export const onInputChange = (
   name: keyof FormState,
-  value: string | boolean,
-  dispatch: (action: DispatchAction) => {},
+  value: DispatchActionDataValue,
+  dispatch: React.Dispatch<DispatchAction>,
   formState: FormState
 ) => {
   const { hasError, errorMessage } = validateInput(name, value);
@@ -30,14 +35,14 @@ export const onInputChange = (
   });
 };
 
-export const validateInput = (name: string, value: string | boolean) => {
+export const validateInput = (name: string, value: DispatchActionDataValue) => {
   let hasError = false,
     errorMessage = '';
   switch (name) {
     case 'interestRate':
     case 'initialRepaymentRate':
     case 'loanAmount':
-      if (typeof value === 'boolean') {
+      if (typeof value === 'boolean' || typeof value === 'object') {
         break;
       }
       if (value.trim() === '') {

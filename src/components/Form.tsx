@@ -1,16 +1,28 @@
 'use client';
 
-// React
+// React & non Mui Libs
 import { FormEvent, useState } from 'react';
+import dayjs, { Dayjs } from 'dayjs';
 
 // MUI
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import { Button, TextField, FormLabel, Checkbox, Slider } from '@mui/material';
+import {
+  Button,
+  TextField,
+  FormLabel,
+  Checkbox,
+  Slider,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  IconButton
+} from '@mui/material';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 // Form Utils
 import {
@@ -23,7 +35,7 @@ import { DispatchAction, FormState } from '@/types/common';
 
 type Props = {
   formState: FormState;
-  dispatch: (action: DispatchAction) => {};
+  dispatch: React.Dispatch<DispatchAction>;
 };
 
 export default function Form({ formState: state, dispatch }: Props) {
@@ -74,57 +86,97 @@ export default function Form({ formState: state, dispatch }: Props) {
       {/* <pre>{JSON.stringify(state, null, 2)}</pre> */}
       <Stack spacing={2}>
         <div className="form-element">
-          <FormLabel htmlFor="loanAmount">Loan Amount</FormLabel>
-          <TextField
-            name="loanAmount"
-            onChange={(e) => {
-              onInputChange('loanAmount', e.target.value, dispatch, state);
-            }}
-            onBlur={(e) => {
-              onFocusOut('loanAmount', e.target.value, dispatch, state);
-            }}
-            required
-            value={state.loanAmount.value}
+          <FormControl
+            sx={{ width: '20ch' }}
+            variant="outlined"
             size="small"
-            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-          />
+            required={true}
+          >
+            <InputLabel htmlFor="loanAmount">Darlehensbetrag</InputLabel>
+            <OutlinedInput
+              onChange={(e) => {
+                onInputChange('loanAmount', e.target.value, dispatch, state);
+              }}
+              id="loanAmount"
+              name="loanAmount"
+              type={'text'}
+              endAdornment={<InputAdornment position="end">€</InputAdornment>}
+              label="Darlehensbetrag"
+              value={state.loanAmount.value}
+            />
+          </FormControl>
+
           {state.loanAmount.touched && state.loanAmount.hasError && (
             <div className="error">{state.loanAmount.errorMessage}</div>
           )}
         </div>
 
         <div className="form-element">
-          <FormLabel htmlFor="interestRate">Interest Rate</FormLabel>
-          <TextField
-            name="interestRate"
-            onChange={(e) => {
-              onInputChange('interestRate', e.target.value, dispatch, state);
-            }}
-            required
-            value={state.interestRate.value}
-            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+          <FormControl
+            sx={{ width: '20ch' }}
+            variant="outlined"
             size="small"
-          />
+            required={true}
+          >
+            <InputLabel htmlFor="interestRate">Sollzinssatz</InputLabel>
+            <OutlinedInput
+              onChange={(e) => {
+                onInputChange('interestRate', e.target.value, dispatch, state);
+              }}
+              id="interestRate"
+              name="interestRate"
+              type={'text'}
+              endAdornment={<InputAdornment position="end">%</InputAdornment>}
+              label="Sollzinssatz"
+              value={state.interestRate.value}
+            />
+          </FormControl>
         </div>
 
         <div className="form-element">
-          <FormLabel htmlFor="initialRepaymentRate">
-            Initial Repayment Rate
-          </FormLabel>
-          <TextField
-            name="initialRepaymentRate"
-            onChange={(e) => {
-              onInputChange(
-                'initialRepaymentRate',
-                e.target.value,
-                dispatch,
-                state
-              );
-            }}
+          <FormControl
+            sx={{ width: '20ch' }}
+            variant="outlined"
             size="small"
-            required
-            value={state.initialRepaymentRate.value}
-            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+            required={true}
+          >
+            <InputLabel htmlFor="initialRepaymentRate">
+              Rückzahlungssatz
+            </InputLabel>
+            <OutlinedInput
+              onChange={(e) => {
+                onInputChange(
+                  'initialRepaymentRate',
+                  e.target.value,
+                  dispatch,
+                  state
+                );
+              }}
+              id="initialRepaymentRate"
+              name="initialRepaymentRate"
+              type={'text'}
+              endAdornment={<InputAdornment position="end">%</InputAdornment>}
+              label="Rückzahlungssatz"
+              value={state.initialRepaymentRate.value}
+            />
+          </FormControl>
+        </div>
+
+        <div className="form-element">
+          <DatePicker
+            label="Start Datum"
+            value={dayjs(state.startDate.value)}
+            onChange={(date: Dayjs | null) => {
+              if (!date) return;
+
+              const dateArg = new Date(date.toDate());
+              onInputChange('startDate', dateArg, dispatch, state);
+            }}
+            sx={{ width: '20ch' }}
+            slotProps={{ textField: { size: 'small' } }}
+            views={
+              state.periodType.value === 'annual' ? ['year'] : ['month', 'year']
+            }
           />
         </div>
 

@@ -1,10 +1,12 @@
 import { PeriodType } from '@/lib/RepaymentPlan';
 
+export type DispatchActionDataValue = string | boolean | Date | PeriodType;
+
 export type DispatchAction = {
   type: string;
   data: {
     name: keyof FormState;
-    value: string | boolean;
+    value: DispatchActionDataValue;
     hasError: boolean;
     errorMessage: string;
     touched: boolean;
@@ -26,5 +28,6 @@ export type FormState = {
   fixedInterest: FormStateItem & { value: boolean };
   fixedInterestDuration: FormStateItem & { value: string };
   fixedInterestFollowingInterestRate: FormStateItem & { value: string };
+  startDate: FormStateItem & { value: Date };
   isFormValid: boolean;
 };

@@ -1,5 +1,8 @@
 'use client';
 
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import 'dayjs/locale/de';
 import { useReducer } from 'react';
 import { UPDATE_FORM } from '@/lib/formUtils';
 import Display from './Display';
@@ -21,6 +24,7 @@ const initialState = {
   fixedInterest: { ...commonProps, value: false },
   fixedInterestDuration: { ...commonProps, value: '1' },
   fixedInterestFollowingInterestRate: { ...commonProps, value: '0' },
+  startDate: { ...commonProps, value: new Date() },
   isFormValid: false
 } as FormState;
 
@@ -44,13 +48,27 @@ const formReducer = (state: FormState, action: DispatchAction) => {
 export default function Loaner() {
   const [formState, dispatch] = useReducer(formReducer, initialState) as [
     FormState,
-    () => {}
+    React.Dispatch<DispatchAction>
   ];
 
+  console.log('--- formState', formState);
+
+  const startDate = formState.startDate.value;
+  const periodType = formState.periodType.value;
+
+  if (periodType === 'annual') {
+    startDate.setMonth(0);
+  }
+
+  startDate.setHours(0, 0, 0, 0);
+  startDate.setDate(1);
+
   return (
-    <div>
-      <Form formState={formState} dispatch={dispatch} />
-      <Display formState={formState} />
-    </div>
+    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="de">
+      <div>
+        <Form formState={formState} dispatch={dispatch} />
+        <Display formState={formState} />
+      </div>
+    </LocalizationProvider>
   );
 }

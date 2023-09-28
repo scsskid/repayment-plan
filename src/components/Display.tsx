@@ -10,17 +10,19 @@ type Props = {
 export default function Display({ formState }: Props) {
   const { repaymentPlan, isFormValidSimple } = useRepaymentPlan(formState);
   const { initialAunnuity, periodType } = repaymentPlan;
+  const periodCount = repaymentPlan.repaymentEntries.length;
+  const durationDisplay = () => {
+    if (periodType === 'annual') {
+      return `${periodCount} Jahre`;
+    }
 
-  const startDate = new Date();
+    var years = Math.floor(periodCount / 12);
+    var months: number = periodCount % 12;
 
-  if (periodType === 'annual') {
-    startDate.setMonth(0);
-  }
+    return `${years} Jahre ${months} Monate`;
+  };
 
-  startDate.setHours(0, 0, 0, 0);
-  startDate.setDate(1);
-
-  console.log('--- startDate', startDate);
+  const { startDate } = formState;
 
   if (!isFormValidSimple) {
     return (
@@ -37,9 +39,12 @@ export default function Display({ formState }: Props) {
 
       <dl>
         <dt>Startdatum: </dt>
-        <dd>{startDate.toLocaleDateString('de')}</dd>
-        <dt>Laufzeit: </dt>
+        <dd>{startDate.value.toLocaleDateString('de')}</dd>
+        <dt>Periode Art: </dt>
         <dd>{repaymentPlan.periodType}</dd>
+        <dt>Laufzeit: </dt>
+
+        <dd>{durationDisplay()}</dd>
         {initialAunnuity && (
           <>
             <dt>Annuität: </dt>
