@@ -83,7 +83,7 @@ export default function Form({
 
   return (
     <form onSubmit={formSubmitHandler}>
-      <pre>{JSON.stringify(state, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(state, null, 2)}</pre> */}
 
       <Stack spacing={2}>
         {showError && !state.isFormValid && (
