@@ -55,7 +55,9 @@ export default function Loaner() {
           setFormSubmitted={setFormSubmitted}
           formSubmitted={formSubmitted}
         />
-        {formSubmitted && <Display formState={formState} />}
+        {formSubmitted && formState.isFormValid && (
+          <Display formState={formState} />
+        )}
       </div>
     </LocalizationProvider>
   );

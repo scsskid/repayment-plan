@@ -31,7 +31,7 @@ export const onInputChange = (
 
   dispatch({
     type: UPDATE_FORM,
-    data: { name, value, hasError, errorMessage, touched: false, isFormValid }
+    data: { name, value, hasError, errorMessage, touched: true, isFormValid }
   });
 };
 
@@ -48,9 +48,9 @@ export const validateInput = (name: string, value: DispatchActionDataValue) => {
       if (value.trim() === '') {
         hasError = true;
         errorMessage = 'Cannot be empty';
-      } else if (!/^[1-9]\d*$/.test(value)) {
+      } else if (!/^[0-9]+(?:\.[0-9]+)?$/.test(value)) {
         hasError = true;
-        errorMessage = 'Not a positive number (Int)';
+        errorMessage = 'Not a positive float or decimals not seperated by .)';
       } else {
         hasError = false;
         errorMessage = '';
@@ -61,40 +61,3 @@ export const validateInput = (name: string, value: DispatchActionDataValue) => {
   }
   return { hasError, errorMessage };
 };
-
-export const onFocusOut = (
-  name: keyof FormState,
-  value: string,
-  dispatch: (action: DispatchAction) => {},
-  formState: FormState
-) => {
-  const { hasError, errorMessage } = validateInput(name, value);
-  let isFormValid = true;
-  for (const key in formState) {
-    const item = formState[key as keyof FormState] as FormStateItem;
-    if (key === name && hasError) {
-      isFormValid = false;
-      break;
-    } else if (key !== name && item.hasError) {
-      isFormValid = false;
-      break;
-    }
-  }
-
-  dispatch({
-    type: UPDATE_FORM,
-    data: { name, value, hasError, errorMessage, touched: true, isFormValid }
-  });
-};
-
-// const validateForm = (formState) => {
-//   let isFormValid = true;
-//   for (const key in formState) {
-//     const item = formState[key];
-//     if (item.hasError) {
-//       isFormValid = false;
-//       break;
-//     }
-//   }
-//   return isFormValid;
-// };

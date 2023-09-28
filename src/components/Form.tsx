@@ -17,20 +17,14 @@ import {
   Slider,
   InputLabel,
   OutlinedInput,
-  InputAdornment,
-  IconButton
+  InputAdornment
 } from '@mui/material';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 // Form Utils
-import {
-  onInputChange,
-  onFocusOut,
-  validateInput,
-  UPDATE_FORM
-} from '@/lib/formUtils';
+import { onInputChange, validateInput, UPDATE_FORM } from '@/lib/formUtils';
 import { DispatchAction, FormState } from '@/types/common';
 
 type Props = {
@@ -49,8 +43,7 @@ export default function Form({
   const [showError, setShowError] = useState(false);
 
   const formSubmitHandler = (e: FormEvent) => {
-    e.preventDefault(); //prevents the form from submitting
-    setFormSubmitted(true);
+    e.preventDefault();
 
     let isFormValid = true;
 
@@ -80,10 +73,9 @@ export default function Form({
     if (!isFormValid) {
       setShowError(true);
     } else {
-      //Logic to submit the form to backend
+      setFormSubmitted(true);
     }
 
-    // Hide the error message after 5 seconds
     setTimeout(() => {
       setShowError(false);
     }, 5000);
@@ -91,9 +83,14 @@ export default function Form({
 
   return (
     <form onSubmit={formSubmitHandler}>
-      {/* <pre>{JSON.stringify(state, null, 2)}</pre> */}
+      <pre>{JSON.stringify(state, null, 2)}</pre>
+
       <Stack spacing={2}>
+        {showError && !state.isFormValid && (
+          <p className="form_error">Please fill all the fields correctly</p>
+        )}
         <div className="form-element">
+          {showError}
           <FormControl
             sx={{ width: '20ch' }}
             variant="outlined"
@@ -139,6 +136,10 @@ export default function Form({
               value={state.interestRate.value}
             />
           </FormControl>
+
+          {state.interestRate.touched && state.interestRate.hasError && (
+            <div className="error">{state.interestRate.errorMessage}</div>
+          )}
         </div>
 
         <div className="form-element">
@@ -168,6 +169,13 @@ export default function Form({
               value={state.initialRepaymentRate.value}
             />
           </FormControl>
+
+          {state.initialRepaymentRate.touched &&
+            state.initialRepaymentRate.hasError && (
+              <div className="error">
+                {state.initialRepaymentRate.errorMessage}
+              </div>
+            )}
         </div>
 
         <div className="form-element">
