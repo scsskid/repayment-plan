@@ -76,10 +76,10 @@ export default class Loaner {
     // set repayment to initial value (Year 0)
     const initialRepayment =
       (remainingLoanAmount * this.initialRepaymentRate) / 100 / periodDivider;
-    const interest =
+    const initialInterest =
       (remainingLoanAmount * this.interestRate) / 100 / periodDivider;
     // set total payment which remains constant in every future period ("annuity")
-    let annuity = interest + initialRepayment;
+    let annuity = initialInterest + initialRepayment;
     this.initialAunnuity = annuity;
 
     while (remainingLoanAmount > 0 && periodIndex < 999) {
@@ -93,6 +93,48 @@ export default class Loaner {
       ) {
         this.loanAmountAfterFixedInterestPeriod = remainingLoanAmount;
       }
+
+      // ----------- Anschlussfinanzierung Berechnung
+      /*
+
+      if (
+        this.fixedInterest &&
+        this.fixedInterestDuration &&
+        this.fixedInterestFollowingInterestRate &&
+        this.fixedInterestFollowingInterestRate > 0
+      ) {
+        console.log({
+          thisFixedInterestDuration: this.fixedInterestDuration,
+          periodIndex
+        });
+        if (periodIndex === this.fixedInterestDuration * periodDivider) {
+          console.log('fixedInterestDuration reached', remainingLoanAmount);
+          this.interestRate = this.fixedInterestFollowingInterestRate;
+          interest =
+            (remainingLoanAmount * this.fixedInterestFollowingInterestRate) /
+            100 /
+            periodDivider;
+
+          annuity =
+            (remainingLoanAmount * this.fixedInterestFollowingInterestRate) /
+              100 /
+              periodDivider +
+            (remainingLoanAmount * this.initialRepaymentRate) /
+              100 /
+              periodDivider;
+        }
+
+        if (periodIndex >= this.fixedInterestDuration * periodDivider) {
+          interest =
+            (remainingLoanAmount * this.fixedInterestFollowingInterestRate) /
+            100 /
+            periodDivider;
+        }
+      }
+
+      */
+
+      // -----------
 
       let currentPeriodRepayment = annuity - interest;
 
@@ -115,7 +157,7 @@ export default class Loaner {
           remainingLoanAmount - currentPeriodRepayment,
         isFirstPeriodAfterFixedInterest:
           hasValidFixedInterest === true &&
-          // @ts-ignore
+          this.fixedInterestDuration &&
           periodIndex === this.fixedInterestDuration * periodDivider
       } as LoanerEntry);
 
